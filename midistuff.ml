@@ -73,17 +73,17 @@ let print_event (status, data1, data2) =
   end
 ;;
 
-let main () =
-  let resource = nanostream () in
-  match resource with
-  | None -> print_string "No nanocontrol device found."
-  | Some stream -> begin
-    let mm = map_midi stream in
+let main ?(dev = "nanoKONTROL MIDI") () =
+  let info = select_device true ~regex:dev () in
+  let index = match info with
+  | Some (i, _) -> i
+  | None -> failwith (sprintf "No \"%s\" device found." dev) in
+  let stream = open_input index 64 in
+  let mm = map_midi stream in
     let rec go () =
       begin
         mm print_event;
         go ();
       end in
     go ()
-  end
 ;;

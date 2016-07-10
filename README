@@ -3,5 +3,5 @@ rlwrap bin/ocaml
 #use "topfind";;
 #require "ocaml_portmidi";;
 #require "str";;
-open Portmidi;;
-
+#use "midistuff.ml";;
+main ();;
