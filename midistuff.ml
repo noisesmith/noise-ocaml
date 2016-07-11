@@ -56,7 +56,7 @@ let map_midi stream =
   let rec map_stream f =
     let read_count = read_stream stream events 0 128 in
     let rec process n =
-      if read_count <= n
+      if n >= read_count
       then ()
       else begin
         f (message_contents events.(n).message);
