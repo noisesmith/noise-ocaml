@@ -4,7 +4,6 @@ let setup width height =
   let _ = V.set_video_mode width height [`DOUBLEBUF] in
   let surface = V.get_video_surface () in
   surface
-;;
 
 let draw_ui surface ar =
   begin
@@ -15,7 +14,6 @@ let draw_ui surface ar =
       ar;
     V.flip surface
   end
-;;
 
 
 let main ?(width=800) ?(height=600) () =
@@ -23,4 +21,3 @@ let main ?(width=800) ?(height=600) () =
                 ([|10; 10; 10; 20|], 0xff00ffl)|] in
   let surface = setup width height in
   draw_ui surface rects
-;;

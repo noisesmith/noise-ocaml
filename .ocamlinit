@@ -1,0 +1,7 @@
+#use "topfind";;
+#require "ocaml_portmidi";;
+#require "str";;
+#require "sdl";;
+#load "vidstuff.cmo";;
+#load "midistuff.cmo";;
+#load "ui.cmo";;

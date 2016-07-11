@@ -1,6 +1,6 @@
-open Portmidi;;
-open Printf;;
-open Str;;
+open Portmidi
+open Printf
+open Str
 
 type devices =
   {inputs : (int * Portmidi.device_info) list;
@@ -25,7 +25,6 @@ let device_query () =
            | {input = false} -> {default; inputs; outputs = next :: outputs} in
          devices (n + 1) found in
          devices 0 {inputs=[]; outputs=[]; default=None}
-;;
 
 let select_device input ?(regex=".*") ?devices () =
   let {inputs; outputs} = match devices with
@@ -41,7 +40,6 @@ let select_device input ?(regex=".*") ?devices () =
     | (d :: _) when matched d -> (Some d)
     | (_ :: ds) -> find_dev ds in
   find_dev dev_list
-;;
 
 let nanocontrol () = select_device true ~regex:"nanoKONTROL MIDI" ()
 
@@ -71,19 +69,20 @@ let print_event (status, data1, data2) =
     printf "%d\t%d\t%d" status data1 data2;
     print_newline ()
   end
-;;
+
+let get_stream index =
+  open_input index 64
 
 let main ?(dev = "nanoKONTROL MIDI") () =
   let info = select_device true ~regex:dev () in
   let index = match info with
   | Some (i, _) -> i
   | None -> failwith (sprintf "No \"%s\" device found." dev) in
-  let stream = open_input index 64 in
+  let stream = get_stream index in
   let mm = map_midi stream in
-    let rec go () =
-      begin
-        mm print_event;
-        go ();
-      end in
-    go ()
-;;
+  let rec go () =
+    begin
+      mm print_event;
+      go ();
+    end in
+  go ()

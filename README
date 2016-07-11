@@ -1,7 +1,10 @@
+the .ocamlinit takes care of most of the details here
+
 . ld-path
+make
 rlwrap bin/ocaml
-#use "topfind";;
-#require "ocaml_portmidi";;
-#require "str";;
-#use "midistuff.ml";;
-main ();;
+Ui.main ();;
+
+after recompiling with make, you can use
+#load "foo.cmo"
+to get the new version

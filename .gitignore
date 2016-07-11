@@ -2,3 +2,8 @@ bin
 *.swp
 *.cmx
 *.cma
+*.cmo
+*.cmi
+*.o
+app.byte
+app
