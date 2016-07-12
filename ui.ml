@@ -30,6 +30,7 @@ let main () =
      begin
        run_midi midi_handler;
        V.draw_ui surface sliders;
+       Unix.select [] [] [] 0.05;
        go ()
      end in
    go ()
