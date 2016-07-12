@@ -11,7 +11,7 @@ vidstuff.cmo: vidstuff.ml
 midistuff.cmo: midistuff.ml
 	${BYTE} -c -package ${PACKAGES} midistuff.ml
 
-ui.cmo: ui.ml
+ui.cmo: ui.ml vidstuff.cmo
 	${BYTE} -c -package ${PACKAGES} ui.ml
 
 app.cmo: vidstuff.cmo midistuff.cmo ui.cmo app.ml
@@ -26,7 +26,7 @@ vidstuff.cmx: vidstuff.ml
 midistuff.cmx: midistuff.ml
 	${OPT} -c -package ${PACKAGES} midistuff.ml
 
-ui.cmx: ui.ml
+ui.cmx: ui.ml vidstuff.cmx
 	${OPT} -c -package ${PACKAGES} ui.ml
 
 app.cmx: vidstuff.cmx midistuff.cmx ui.cmx app.ml

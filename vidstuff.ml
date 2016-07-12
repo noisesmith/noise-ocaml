@@ -1,5 +1,7 @@
 module V = Sdlvideo
 
+(* let's use an object instead of a vector of arry,int32 tuples *)
+
 let setup width height =
   let _ = V.set_video_mode width height [`DOUBLEBUF] in
   let surface = V.get_video_surface () in
