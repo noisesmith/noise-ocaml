@@ -1,9 +1,14 @@
 module V = Vidstuff
 module M = Midistuff
 
-let sliders =
-  [|([|10; 10; 10; 140|], 0xffffffl);
-    ([|10; 137; 10; 12|], 0x000000l)|]
+let sliders = [| new V.vslider 10 10 10 100 ~max:127 ();
+                 new V.vslider 20 10 10 100 ~max:127 ~thumb:10 ();
+                 new V.vslider 30 10 10 100 ~max:127 ~thumb:20 ();
+                 new V.vslider 40 10 10 100 ~max:127 ~thumb:40 ();
+                 new V.vslider 10 210 10 100 ~max:127 ();
+                 new V.vslider 20 210 10 100 ~max:127 ~thumb:10 ();
+                 new V.vslider 30 210 10 100 ~max:127 ~thumb:20 ();
+                 new V.vslider 40 210 10 100 ~max:127 ~thumb:40 () |]
 
 let update_array arr n f =
   Array.set arr n (f arr.(n))
@@ -19,9 +24,7 @@ let main () =
    let midi_handler ((estatus, data1, data2) as status) =
      begin
        M.print_event status;
-       match sliders.(1) with
-       | (el, _) -> Array.set el 1 (137 - data2)
-       | _ -> failwith "cannot find widget to update"
+       Array.iter (fun x -> x#update data2) sliders
      end in
    let rec go () =
      begin
