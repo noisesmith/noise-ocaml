@@ -1,17 +1,13 @@
 module V = Vidstuff
 module M = Midistuff
 
-let sliders = [| new V.vslider 10 10 10 100 ~max:127 ();
-                 new V.vslider 20 10 10 100 ~max:127 ~thumb:10 ();
-                 new V.vslider 30 10 10 100 ~max:127 ~thumb:20 ();
-                 new V.vslider 40 10 10 100 ~max:127 ~thumb:40 ();
-                 new V.vslider 10 210 10 100 ~max:127 ();
-                 new V.vslider 20 210 10 100 ~max:127 ~thumb:10 ();
-                 new V.vslider 30 210 10 100 ~max:127 ~thumb:20 ();
-                 new V.vslider 40 210 10 100 ~max:127 ~thumb:40 () |]
+let controls = V.IntMap.(
+  empty
+  |> add 1 (new V.vslider "pitch" 10 10 10 100 ~max:127 ())
+  |> add 2 (new V.vslider "modulation" 20 10 10 100 ~max:127 ()))
 
-let update_array arr n f =
-  Array.set arr n (f arr.(n))
+let usleep n =
+  ignore (Unix.select [] [] [] n)
 
 let main () =
    let midi_info = M.select_device true ~regex:"nano" () in
@@ -24,13 +20,16 @@ let main () =
    let midi_handler ((estatus, data1, data2) as status) =
      begin
        M.print_event status;
-       Array.iter (fun x -> x#update data2) sliders
+       if V.IntMap.mem data1 controls
+       then let slider = V.IntMap.find data1 controls in
+           slider#update data2
+       else ()
      end in
    let rec go () =
      begin
        run_midi midi_handler;
-       V.draw_ui surface sliders;
-       Unix.select [] [] [] 0.05;
+       V.draw_ui surface controls;
+       usleep 0.05;
        go ()
      end in
    go ()

@@ -4,6 +4,12 @@ module V = Sdlvideo
  * #thread
  * #require "async"*)
 
+module IntMap = Map.Make(
+  struct
+    type t = int
+    let compare = compare
+  end)
+
 class virtual widget =
   object (self)
     method virtual draw : V.surface -> bool
@@ -22,18 +28,20 @@ let adjustor a b a' b' =
 
 let fi = float_of_int
 
-class vslider x y w h ?min ?max ?init ?fg ?bg ?thumb () =
+class vslider name x y w h ?min ?max ?init ?fg ?bg ?thumb () =
   let foreground = default fg 0x00ff00l in
   let background = default bg 0xff00ffl in
   let mn = default min 0 in
-  let mx = default max 1 in
+  let mx = default max 127 in
   let thumb_size = default thumb 5 in
   let ini = default init mn in
   let calc = adjustor (fi mn) (fi mx)
                       (fi (h - thumb_size)) 0. in
+  let put n = int_of_float (calc (fi n)) in
   object (self)
     inherit widget
-    val mutable position = ini
+    val name = name
+    val mutable position = put ini
     method draw surface =
       let base = {V.r_x = x;
                     r_y = y;
@@ -57,18 +65,20 @@ let setup width height =
   let surface = V.get_video_surface () in
   surface
 
-let draw_ui surface ar =
+let draw_ui surface im =
   begin
-    Array.iter (fun widget -> ignore (widget#draw surface)) ar;
+    IntMap.iter (fun _ widget -> ignore (widget#draw surface)) im;
     V.flip surface
   end
 
+let widgets = IntMap.(
+  empty
+  |> add 1 (new vslider "a" 10 10 10 100 ~init:20 ())
+  |> add 2 (new vslider "b" 30 10 10 100 ~init:10 ())
+  |> add 3 (new vslider "c" 50 10 10 100 ~init:0 ())
+  |> add 4 (new vslider "d" 70 10 10 100 ~init:70 ()))
 
 let main ?(width=800) ?(height=600) () =
-  let widgets = [| new vslider 10 10 10 100 ~init:20 ();
-                   new vslider 30 10 10 100 ~init:100 ();
-                   new vslider 50 10 10 100 ~init:0 ();
-                   new vslider 70 10 10 100 ~init:70 () |] in
   let surface = setup width height in
   begin
     draw_ui surface widgets;
