@@ -1,9 +1,5 @@
 module V = Sdlvideo
 
-(* TODO - let's also use async?
- * #thread
- * #require "async"*)
-
 module IntMap = Map.Make(struct type t = int let compare = compare end)
 
 class virtual widget =
@@ -52,7 +48,7 @@ class vslider name x y w h ?min ?max ?init ?fg ?bg ?thumb () =
         V.fill_rect ~rect:thumb surface foreground;
         true
       end
-    method update n = position <- int_of_float (calc (fi n)); ()
+    method update n = position <- int_of_float (calc (fi n))
   end
 
 
