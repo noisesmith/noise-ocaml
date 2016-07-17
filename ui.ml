@@ -1,10 +1,11 @@
 module V = Vidstuff
 module M = Midistuff
 
-let controls = V.IntMap.(
+let controls =
+  let open V.IntMap in
   empty
   |> add 1 (new V.vslider "pitch" 10 10 10 100 ~max:127 ())
-  |> add 2 (new V.vslider "modulation" 20 10 10 100 ~max:127 ()))
+  |> add 2 (new V.vslider "modulation" 20 10 10 100 ~max:127 ())
 
 let usleep n =
   ignore (Unix.select [] [] [] n)

@@ -4,11 +4,7 @@ module V = Sdlvideo
  * #thread
  * #require "async"*)
 
-module IntMap = Map.Make(
-  struct
-    type t = int
-    let compare = compare
-  end)
+module IntMap = Map.Make(struct type t = int let compare = compare end)
 
 class virtual widget =
   object (self)
@@ -71,12 +67,13 @@ let draw_ui surface im =
     V.flip surface
   end
 
-let widgets = IntMap.(
+let widgets =
+  let open IntMap in
   empty
   |> add 1 (new vslider "a" 10 10 10 100 ~init:20 ())
   |> add 2 (new vslider "b" 30 10 10 100 ~init:10 ())
   |> add 3 (new vslider "c" 50 10 10 100 ~init:0 ())
-  |> add 4 (new vslider "d" 70 10 10 100 ~init:70 ()))
+  |> add 4 (new vslider "d" 70 10 10 100 ~init:70 ())
 
 let main ?(width=800) ?(height=600) () =
   let surface = setup width height in
