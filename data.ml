@@ -51,5 +51,5 @@ let val_from b n len =
 
 let self_test () =
   let buf = Bytes.create 65536 in
-  let _ = file_bytes buf ~j:65536 "res/knabble.mp3" in
+  let _ = file_bytes buf ~j:65536 "res/441.mp3" in
   buf
