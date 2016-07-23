@@ -2,35 +2,33 @@ PACKAGES=sdl,ocaml_portmidi,str
 OPT=ocamlfind ocamlopt
 BYTE=ocamlfind ocamlc
 
-app.byte: vidstuff.cmo midistuff.cmo app.cmo ui.cmo
+app.byte: mp3 vidstuff.cmo midistuff.cmo app.cmo ui.cmo data.cmo
 	${BYTE} -o app.byte -linkpkg -package ${PACKAGES} vidstuff.cmo midistuff.cmo ui.cmo app.cmo
 
-vidstuff.cmo: vidstuff.ml
-	${BYTE} -c -package ${PACKAGES} vidstuff.ml
-
-midistuff.cmo: midistuff.ml
-	${BYTE} -c -package ${PACKAGES} midistuff.ml
+%.cmo: %.ml
+	${BYTE} -c -package ${PACKAGES} $<
 
 ui.cmo: ui.ml vidstuff.cmo
-	${BYTE} -c -package ${PACKAGES} ui.ml
 
-app.cmo: vidstuff.cmo midistuff.cmo ui.cmo app.ml
-	${BYTE} -c -package ${PACKAGES} app.ml
+app.cmo: app.ml ui.cmo
 
-app: vidstuff.cmx midistuff.cmx ui.cmx app.cmx
+app: mp3 vidstuff.cmx midistuff.cmx ui.cmx app.cmx data.cmx
 	${OPT} -o app -linkpkg -package ${PACKAGES} vidstuff.cmx midistuff.cmx ui.cmx app.cmx
 
-vidstuff.cmx: vidstuff.ml
-	${OPT} -c -package ${PACKAGES} vidstuff.ml
-
-midistuff.cmx: midistuff.ml
-	${OPT} -c -package ${PACKAGES} midistuff.ml
+%.cmx: %.ml
+	${OPT} -c package ${PACKAGES} $<
 
 ui.cmx: ui.ml vidstuff.cmx
-	${OPT} -c -package ${PACKAGES} ui.ml
 
 app.cmx: vidstuff.cmx midistuff.cmx ui.cmx app.ml
-	${OPT} -c -package ${PACKAGES} app.ml
+
+mp3:	res/sweep.mp3 res/441.mp3
+
+%.mp3:	%.wav
+	lame $< -o $@
+
+%.wav:	%.csd
+	csound $< -o $@
 
 clean:
-	rm -f app.byte app *.cmi *.cmo *.cmx *.o
+	rm -f app.byte app *.cmi *.cmo *.cmx *.o res/*.wav res/*.mp3

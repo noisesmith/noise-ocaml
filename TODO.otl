@@ -1,0 +1,6 @@
+files to process
+	use csound
+		sine wave at 440
+		sine sweep
+
+generating data
