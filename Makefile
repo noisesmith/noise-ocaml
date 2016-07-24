@@ -2,7 +2,7 @@ PACKAGES=sdl,ocaml_portmidi,str
 OPT=ocamlfind ocamlopt
 BYTE=ocamlfind ocamlc
 
-app.byte: mp3 vidstuff.cmo midistuff.cmo app.cmo ui.cmo data.cmo
+app.byte: mp3 process.cmo vidstuff.cmo midistuff.cmo app.cmo ui.cmo data.cmo
 	${BYTE} -o app.byte -linkpkg -package ${PACKAGES} vidstuff.cmo midistuff.cmo ui.cmo app.cmo
 
 %.cmo: %.ml
@@ -12,11 +12,11 @@ ui.cmo: ui.ml vidstuff.cmo
 
 app.cmo: app.ml ui.cmo
 
-app: mp3 vidstuff.cmx midistuff.cmx ui.cmx app.cmx data.cmx
+app: mp3 process.cmx vidstuff.cmx midistuff.cmx ui.cmx app.cmx data.cmx
 	${OPT} -o app -linkpkg -package ${PACKAGES} vidstuff.cmx midistuff.cmx ui.cmx app.cmx
 
 %.cmx: %.ml
-	${OPT} -c package ${PACKAGES} $<
+	${OPT} -c -package ${PACKAGES} $<
 
 ui.cmx: ui.ml vidstuff.cmx
 
