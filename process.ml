@@ -30,10 +30,9 @@ let rec copy_all buf fd =
   let buf_len = Bytes.length buf in
   let consumed = copy_buf ~read_index:0 buf fd in
   let to_process = Bytes.sub_string buf 0 consumed in
-  let result = match consumed with
-               | b when b = buf_len -> String.concat "" [to_process; copy_all buf fd]
-               | _ -> to_process in
-  result
+  if consumed = buf_len
+  then String.concat "" [to_process; copy_all buf fd]
+  else to_process
 
 let split_lines s =
   let rec lines acc idx =
