@@ -1,5 +1,8 @@
 open Unix
 
+let index = Bytes.index_from
+let get = Bytes.get
+
 let mp3_structure =
   object
    val sync_word = (0, 12, 0xfff);
@@ -16,6 +19,51 @@ let mp3_structure =
    val orig = (30, 30, 0x0);
    val emphasis = (31, 32, 0x0)
   end
+
+let get_bits v pos len =
+  let left_pad = 8 - pos in
+  let left_trimmed = (v lsl left_pad) land 0xff in
+  let right_pad = 8 - len in
+  let result = left_trimmed lsr right_pad in
+  result
+
+type header = {
+  bit_rate : int;
+  frequency : int;
+  pad : int;
+  private_ : int;
+  mode : int;
+  mode_ext : int;
+  copy : int;
+  orig : int;
+  emphasis : int
+}
+
+let mp3_header a b =
+  { bit_rate = get_bits a 8 4;
+    frequency = get_bits a 4 2;
+    pad = get_bits a 2 1;
+    private_ = get_bits a 1 1;
+    mode = get_bits b 8 2;
+    mode_ext = get_bits b 6 2;
+    copy = get_bits b 4 1;
+    orig = get_bits b 3 1;
+    emphasis = get_bits b 2 2
+  }
+
+let is_header bytes idx =
+  (get bytes idx) = '\xff' && (get bytes (idx + 1)) = '\xff'
+
+let rec find_header bytes idx =
+  if is_header bytes idx
+  then let a = get bytes (idx + 2) in
+       let b = get bytes (idx + 3) in
+       let byte_a = int_of_char a in
+       let byte_b = int_of_char b in
+       let header = mp3_header byte_a byte_b in
+       (idx, header)
+  else let new_idx = index bytes (idx + 1) '\xff' in
+       find_header bytes new_idx
 
 let file_bytes buf ?(i=0) ?(j=0) ?(len=0) name =
   let handle = openfile name [O_RDONLY] 0o640 in

@@ -43,9 +43,9 @@ let split_lines s =
     let region_size = idx - region_start in
     let next_string = String.sub s region_start region_size in
     let new_acc = next_string :: acc in
-    match region_start with
-    | 0 -> new_acc
-    | _ -> lines (next_string :: acc) found in
+    if region_start = 0
+    then new_acc
+    else lines (next_string :: acc) found in
   lines [] (String.length s)
 
 class proc per_line args =
