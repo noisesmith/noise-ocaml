@@ -3,24 +3,8 @@ open Unix
 let index = Bytes.index_from
 let get = Bytes.get
 
-let mp3_structure =
-  object
-   val sync_word = (0, 12, 0xfff);
-   val version = (13, 13, 0x1);
-   val layer = (14, 15, 0x1);
-   val error = (16, 16, 0x1);
-   val bit_rate = (17, 20, 0xa);
-   val frequency = (21, 22, 0x0);
-   val pad = (23, 23, 0x0);
-   val private_ = (24, 24, 0x0);
-   val mode = (25, 26, 0x1);
-   val mode_ext = (27, 28, 0x0);
-   val copy = (29, 29, 0x0);
-   val orig = (30, 30, 0x0);
-   val emphasis = (31, 32, 0x0)
-  end
-
-let get_bits v pos len =
+let get_bits v pos len pos' =
+  let () = assert ((pos - len) = pos') in
   let left_pad = 8 - pos in
   let left_trimmed = (v lsl left_pad) land 0xff in
   let right_pad = 8 - len in
