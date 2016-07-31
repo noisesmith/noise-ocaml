@@ -39,17 +39,17 @@ type header = {
   emphasis : int
 }
 
-let mp3_header a b =
-  { bit_rate = get_bits a 8 4;
-    frequency = get_bits a 4 2;
-    pad = get_bits a 2 1;
-    private_ = get_bits a 1 1;
-    mode = get_bits b 8 2;
-    mode_ext = get_bits b 6 2;
-    copy = get_bits b 4 1;
-    orig = get_bits b 3 1;
-    emphasis = get_bits b 2 2
-  }
+let mp3_header a b = {
+  bit_rate = get_bits a 8 4 4;
+  frequency = get_bits a 4 2 2;
+  pad = get_bits a 2 1 1;
+  private_ = get_bits a 1 1 0;
+  mode = get_bits b 8 2 6;
+  mode_ext = get_bits b 6 2 4;
+  copy = get_bits b 4 1 3;
+  orig = get_bits b 3 1 2;
+  emphasis = get_bits b 2 2 0
+}
 
 let is_header bytes idx =
   (get bytes idx) = '\xff' && (get bytes (idx + 1)) = '\xff'
